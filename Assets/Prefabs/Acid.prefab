@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3036138710054368196}
   - component: {fileID: 4529981835644748001}
   - component: {fileID: 3949564486042380983}
-  - component: {fileID: 2580704039978322165}
+  - component: {fileID: 2801338325219417223}
   m_Layer: 0
   m_Name: Acid
   m_TagString: Untagged
@@ -330,8 +330,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8274531753940645467}
   m_Mesh: {fileID: 0}
---- !u!64 &2580704039978322165
-MeshCollider:
+--- !u!65 &2801338325219417223
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -345,10 +345,9 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  serializedVersion: 3
+  m_Size: {x: 4.8941536, y: 1.920215, z: 5.2354813}
+  m_Center: {x: 0.015903473, y: 0, z: -0.029678345}
