@@ -154,10 +154,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     
     //Start
-    void Start()
-    {
-        Debug.Log(" hello");
-    }
     //Update
     // void Update()
     // {
