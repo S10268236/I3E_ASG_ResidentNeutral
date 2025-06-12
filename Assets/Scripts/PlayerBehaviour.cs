@@ -174,10 +174,16 @@ public class PlayerBehaviour : MonoBehaviour
     TextMeshProUGUI mutagenAmtText;
 
     [SerializeField]
+    Image reticle;
+
+    [SerializeField]
     TextMeshProUGUI holdBreathText;
 
     [SerializeField]
     Transform spawnPoint;
+
+    [SerializeField]
+    Transform respawnPoint;
 
     [SerializeField]
     float interactionDistance = 5f;
@@ -236,7 +242,11 @@ public class PlayerBehaviour : MonoBehaviour
             currentGun = null;
             canInteract = false;
         }
-        
+        if (playerHealth <= 0)
+        {
+            Debug.Log("You are Dead");
+            respawn();
+        }
     }
     void OnCollisionEnter(Collision collision)
     {
@@ -265,7 +275,6 @@ public class PlayerBehaviour : MonoBehaviour
         {
             //Reduce holdBreath time to signify breath running out
             holdBreath -= Time.deltaTime;
-            Debug.Log("Breath left: " + holdBreath);
             //Once out, start taking damage per second
             if (holdBreath <= 0)
             {
@@ -279,6 +288,16 @@ public class PlayerBehaviour : MonoBehaviour
                 }
             }
         }
+    }
+    private void respawn()
+    {
+        Debug.Log("Respawned");
+        transform.position = respawnPoint.transform.position;
+        transform.rotation = respawnPoint.transform.rotation;
+        // Rigidbody moveRigidBody = GetComponent<Rigidbody>();
+        // moveRigidBody.MovePosition(respawnPoint.transform.position);
+        playerHealth += 100;
+        playerHealthText.text = "Health: " + playerHealth.ToString();
     }
     void OnTriggerExit(Collider other)
     {
