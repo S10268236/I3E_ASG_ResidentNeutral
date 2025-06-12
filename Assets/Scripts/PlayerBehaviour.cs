@@ -157,13 +157,18 @@ public class PlayerBehaviour : MonoBehaviour
     DoorBehaviour currentDoor = null;
     MutagenBehaviour currentMutagen = null;
     [SerializeField]
+    TextMeshProUGUI playerHealthText;
+    [SerializeField]
     TextMeshProUGUI mutagenAmtText;
+
     [SerializeField]
     Transform spawnPoint;
     [SerializeField]
     float interactionDistance = 5f;
     void Start()
     {
+        //Add text to UI
+        playerHealthText.text = "Health: " + playerHealth.ToString();
         mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
     void Update()
@@ -207,43 +212,13 @@ public class PlayerBehaviour : MonoBehaviour
         Debug.Log("Collided with " + collision.gameObject.name);
     }
 
-    //Register when in range of interactables
-    void OnTriggerEnter(Collider other)
-    {
-        // Debug.Log("Triggered " + other.gameObject.name);
-        // if (other.CompareTag("Door"))
-        // {
-        //     canInteract = true;
-        //     currentDoor = other.GetComponent<DoorBehaviour>();
-        // }
-        // else if (other.CompareTag("Collectible"))
-        // {
-        //     canInteract = true;
-        //     currentMutagen = other.GetComponent<MutagenBehaviour>();
-        // }
-    }
-    //Register when leaving range of interactables
-    void OnTriggerExit(Collider other)
-    {
-        // Debug.Log("Exited zone of " + other.gameObject.name);
-        // if (other.gameObject == currentDoor.gameObject)
-        // {
-        //     canInteract = false;
-        //     currentDoor = null;
-        // }
-        // else if (other.gameObject == currentMutagen.gameObject)
-        // {
-        //     canInteract = false;
-        //     currentMutagen = null;
-        // }
-    }
     //What to do when interact is pressed
     public void OnInteract()
     {
         //Check if able to interact
         if (canInteract)
         {
-            //Check if Door or 
+            //Check if Door or Collectible
             if (currentDoor != null)
             {
                 Debug.Log("Interacting with Door");
@@ -260,6 +235,7 @@ public class PlayerBehaviour : MonoBehaviour
     public void ModifyMutagenAmt(int amt)
     {
         mutagenAmt += amt;
+        //Update new mutagen amount to UI
         mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
     public void OnFire()
