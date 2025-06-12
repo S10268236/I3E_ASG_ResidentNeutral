@@ -156,6 +156,8 @@ public class PlayerBehaviour : MonoBehaviour
     bool canInteract = false;
     //Use to track time for damage
     private float damageTimer = 0f;
+    //Track held breath time
+    private float holdBreath = 5f;
     //Onscreen overlay for taking damage
     // public Image HealthImpact;
     DoorBehaviour currentDoor = null;
@@ -174,6 +176,8 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField]
     int acidDPS = 20;
+    [SerializeField]
+    int smokeDPS = 10;
     void Start()
     {
         //Add text to UI
@@ -219,6 +223,7 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void OnTriggerStay(Collider other)
     {
+        //Acid Damage Over Time
         if (other.gameObject.CompareTag("Acid") && playerHealth > 0)
         {
             //Track time
@@ -230,6 +235,32 @@ public class PlayerBehaviour : MonoBehaviour
                 damageTimer = 0f;
             }
         }
+        //Smoke-buffer time of held breath, then Damage Over Time
+        else if (other.gameObject.CompareTag("Smoke") && playerHealth > 0)
+        {
+            //Reduce holdBreath time to signify breath running out
+            holdBreath -= Time.deltaTime;
+            Debug.Log("Breath left: " + holdBreath);
+            //Once out, start taking damage per second
+            if (holdBreath <= 0)
+            {
+                //use damageTimer to time seconds per tick damage
+                damageTimer += Time.deltaTime;
+                if (damageTimer >= 2f)
+                {
+                    playerHealth -= smokeDPS;
+                    playerHealthText.text = "Health: " + playerHealth.ToString();
+                    damageTimer = 0f;
+                }
+            }
+        }
+    }
+    void OnTriggerExit(Collider other)
+    {
+        //Resets damage timer if player leaves hazard zone
+        damageTimer = 0f;
+        //Reset Breath after leaving smoke zone
+        holdBreath = 5f;
     }
 
     //What to do when interact is pressed
