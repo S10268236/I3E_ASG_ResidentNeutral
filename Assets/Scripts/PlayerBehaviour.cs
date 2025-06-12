@@ -158,10 +158,15 @@ public class PlayerBehaviour : MonoBehaviour
     private float damageTimer = 0f;
     //Track held breath time
     private float holdBreath = 5f;
+    //Track whether gun is obtained
+    bool gotGun = false;
     //Onscreen overlay for taking damage
     // public Image HealthImpact;
+    //Set a variable for Door, Mutagen and Gun, set it to null for future storage of Raycast collider
     DoorBehaviour currentDoor = null;
     MutagenBehaviour currentMutagen = null;
+    GunBehaviour currentGun = null;
+
     [SerializeField]
     TextMeshProUGUI playerHealthText;
 
@@ -217,12 +222,18 @@ public class PlayerBehaviour : MonoBehaviour
                 currentDoor = hitInfo.collider.gameObject.GetComponent<DoorBehaviour>();
                 canInteract = true;
             }
+            else if (hitInfo.collider.gameObject.CompareTag("Gun"))
+            {
+                currentGun = hitInfo.collider.gameObject.GetComponent<GunBehaviour>();
+                canInteract = true;
+            }
         }
         //Reset all variables to default state when Raycast = false
         else
         {
             currentMutagen = null;
             currentDoor = null;
+            currentGun = null;
             canInteract = false;
         }
         
@@ -294,6 +305,12 @@ public class PlayerBehaviour : MonoBehaviour
                 Debug.Log("Mutagen GET");
                 currentMutagen.Collect(this);
             }
+            else if (currentGun != null)
+            {
+                Debug.Log("Gun GET!");
+                currentGun.Collect(this);
+                gotGun = true;
+            }
         }
     }
     //Add to mutagen score when collected
@@ -305,20 +322,13 @@ public class PlayerBehaviour : MonoBehaviour
     }
     public void OnFire()
     {
-        Debug.Log("Firing");
-        //Instantiate a new projectile at spawn point
-        //Store projectile to newProjectile variable
-        GameObject newProjectile = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
-        Vector3 fireForce = spawnPoint.forward * fireStrength;
-        newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
+        if (gotGun)
+        {
+            //Instantiate a new projectile at spawn point
+            //Store projectile to newProjectile variable
+            GameObject newProjectile = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
+            Vector3 fireForce = spawnPoint.forward * fireStrength;
+            newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
+        }
     }
-    // void OnFire()
-    // {
-    //     Debug.Log("fire");
-    //     //Instantiate a new projectile at spawn point
-    //     //Store projectile to the 'newProjectile' variable
-    //  GameObject newProjectile = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
-    //     Vector3 fireForce = spawnPoint.forward * fireStrength;
-    //     newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
-    // }
 }

@@ -12,6 +12,7 @@ TagManager:
   - Acid
   - Smoke
   - Projectile
+  - Gun
   layers:
   - Default
   - TransparentFX
