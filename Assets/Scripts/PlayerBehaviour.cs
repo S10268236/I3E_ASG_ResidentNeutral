@@ -169,6 +169,9 @@ public class PlayerBehaviour : MonoBehaviour
     TextMeshProUGUI mutagenAmtText;
 
     [SerializeField]
+    TextMeshProUGUI holdBreathText;
+
+    [SerializeField]
     Transform spawnPoint;
 
     [SerializeField]
@@ -178,6 +181,13 @@ public class PlayerBehaviour : MonoBehaviour
     int acidDPS = 20;
     [SerializeField]
     int smokeDPS = 10;
+
+    [SerializeField]
+    GameObject projectile;
+
+    [SerializeField]
+    float fireStrength = 200f;
+
     void Start()
     {
         //Add text to UI
@@ -220,6 +230,10 @@ public class PlayerBehaviour : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collided with " + collision.gameObject.name);
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        // holdBreathText.text = holdBreath.ToString();
     }
     void OnTriggerStay(Collider other)
     {
@@ -292,6 +306,11 @@ public class PlayerBehaviour : MonoBehaviour
     public void OnFire()
     {
         Debug.Log("Firing");
+        //Instantiate a new projectile at spawn point
+        //Store projectile to newProjectile variable
+        GameObject newProjectile = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
+        Vector3 fireForce = spawnPoint.forward * fireStrength;
+        newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
     }
     // void OnFire()
     // {
