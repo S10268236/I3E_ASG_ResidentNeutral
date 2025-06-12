@@ -8,8 +8,9 @@ TagManager:
   - Door
   - Gate
   - Enemy
-  - Trap
   - Collectible
+  - Acid
+  - Smoke
   layers:
   - Default
   - TransparentFX

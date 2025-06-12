@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class PlayerBehaviour : MonoBehaviour
@@ -152,19 +153,27 @@ public class PlayerBehaviour : MonoBehaviour
     /// </summary>
     int mutagenAmt = 0;
     int playerHealth = 100;
-
     bool canInteract = false;
+    //Use to track time for damage
+    private float damageTimer = 0f;
+    //Onscreen overlay for taking damage
+    // public Image HealthImpact;
     DoorBehaviour currentDoor = null;
     MutagenBehaviour currentMutagen = null;
     [SerializeField]
     TextMeshProUGUI playerHealthText;
+
     [SerializeField]
     TextMeshProUGUI mutagenAmtText;
 
     [SerializeField]
     Transform spawnPoint;
+
     [SerializeField]
     float interactionDistance = 5f;
+
+    [SerializeField]
+    int acidDPS = 20;
     void Start()
     {
         //Add text to UI
@@ -175,15 +184,14 @@ public class PlayerBehaviour : MonoBehaviour
     {
         //Raycasting for interactables
         RaycastHit hitInfo;
-        Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
+        // Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
         //Raycast = true when hitting something
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
         {
-            Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
+            // Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
             //If collectible is within interaction range
             if (hitInfo.collider.gameObject.CompareTag("Collectible"))
             {
-                Debug.Log("Interactable Mutagen");
                 //Set currentMutagen to the one in front of player and allow use of Interact
                 currentMutagen = hitInfo.collider.gameObject.GetComponent<MutagenBehaviour>();
                 canInteract = true;
@@ -191,7 +199,6 @@ public class PlayerBehaviour : MonoBehaviour
             //If door is within interaction range
             else if (hitInfo.collider.gameObject.CompareTag("Door"))
             {
-                Debug.Log("Interactable Door");
                 //Set currentDoor to the one in front of player and allow use of Interact
                 currentDoor = hitInfo.collider.gameObject.GetComponent<DoorBehaviour>();
                 canInteract = true;
@@ -200,7 +207,6 @@ public class PlayerBehaviour : MonoBehaviour
         //Reset all variables to default state when Raycast = false
         else
         {
-            Debug.Log("Reset");
             currentMutagen = null;
             currentDoor = null;
             canInteract = false;
@@ -210,6 +216,20 @@ public class PlayerBehaviour : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collided with " + collision.gameObject.name);
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Acid") && playerHealth > 0)
+        {
+            //Track time
+            damageTimer += Time.deltaTime;
+            if (damageTimer >= 2f)
+            {
+                playerHealth -= acidDPS;
+                playerHealthText.text = "Health: " + playerHealth.ToString();
+                damageTimer = 0f;
+            }
+        }
     }
 
     //What to do when interact is pressed
