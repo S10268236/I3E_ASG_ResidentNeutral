@@ -162,25 +162,43 @@ public class PlayerBehaviour : MonoBehaviour
     Transform spawnPoint;
     [SerializeField]
     float interactionDistance = 5f;
-    // void Start()
-    // {
-    //     mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
-    // }
+    void Start()
+    {
+        mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
+    }
     void Update()
     {
-        //Raycasting to search for interactables
+        //Raycasting for interactables
         RaycastHit hitInfo;
         Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
+        //Raycast = true when hitting something
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
         {
             Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
-            if (hitInfo.collider.CompareTag("Collectible"))
+            //If collectible is within interaction range
+            if (hitInfo.collider.gameObject.CompareTag("Collectible"))
             {
-                if (currentMutagen != null)
-                {
-                    canInteract = true;
-                }
+                Debug.Log("Interactable Mutagen");
+                //Set currentMutagen to the one in front of player and allow use of Interact
+                currentMutagen = hitInfo.collider.gameObject.GetComponent<MutagenBehaviour>();
+                canInteract = true;
             }
+            //If door is within interaction range
+            else if (hitInfo.collider.gameObject.CompareTag("Door"))
+            {
+                Debug.Log("Interactable Door");
+                //Set currentDoor to the one in front of player and allow use of Interact
+                currentDoor = hitInfo.collider.gameObject.GetComponent<DoorBehaviour>();
+                canInteract = true;
+            }
+        }
+        //Reset all variables to default state when Raycast = false
+        else
+        {
+            Debug.Log("Reset");
+            currentMutagen = null;
+            currentDoor = null;
+            canInteract = false;
         }
         
     }
@@ -192,32 +210,32 @@ public class PlayerBehaviour : MonoBehaviour
     //Register when in range of interactables
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Triggered " + other.gameObject.name);
-        if (other.CompareTag("Door"))
-        {
-            canInteract = true;
-            currentDoor = other.GetComponent<DoorBehaviour>();
-        }
-        else if (other.CompareTag("Collectible"))
-        {
-            canInteract = true;
-            currentMutagen = other.GetComponent<MutagenBehaviour>();
-        }
+        // Debug.Log("Triggered " + other.gameObject.name);
+        // if (other.CompareTag("Door"))
+        // {
+        //     canInteract = true;
+        //     currentDoor = other.GetComponent<DoorBehaviour>();
+        // }
+        // else if (other.CompareTag("Collectible"))
+        // {
+        //     canInteract = true;
+        //     currentMutagen = other.GetComponent<MutagenBehaviour>();
+        // }
     }
     //Register when leaving range of interactables
     void OnTriggerExit(Collider other)
     {
-        Debug.Log("Exited zone of " + other.gameObject.name);
-        if (other.gameObject == currentDoor.gameObject)
-        {
-            canInteract = false;
-            currentDoor = null;
-        }
-        else if (other.gameObject == currentMutagen.gameObject)
-        {
-            canInteract = false;
-            currentMutagen = null;
-        }
+        // Debug.Log("Exited zone of " + other.gameObject.name);
+        // if (other.gameObject == currentDoor.gameObject)
+        // {
+        //     canInteract = false;
+        //     currentDoor = null;
+        // }
+        // else if (other.gameObject == currentMutagen.gameObject)
+        // {
+        //     canInteract = false;
+        //     currentMutagen = null;
+        // }
     }
     //What to do when interact is pressed
     public void OnInteract()
@@ -242,8 +260,7 @@ public class PlayerBehaviour : MonoBehaviour
     public void ModifyMutagenAmt(int amt)
     {
         mutagenAmt += amt;
-        Debug.Log("Mutagen Collected");
-        Debug.Log(mutagenAmt);
+        mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
     public void OnFire()
     {

@@ -39027,10 +39027,11 @@ GameObject:
   - component: {fileID: 8606088834444154965}
   - component: {fileID: 731752953298402065}
   - component: {fileID: 2062226269910049131}
-  - component: {fileID: 9172981178145483788}
+  - component: {fileID: 7551906527121417037}
+  - component: {fileID: 1612370482046384139}
   m_Layer: 0
   m_Name: Mutagen
-  m_TagString: Untagged
+  m_TagString: Collectible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39045,7 +39046,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 19.12, y: 1.17, z: 34.1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.4930987, y: 2.4930987, z: 2.4930987}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9124753570896207538}
@@ -73099,7 +73100,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5865268919364884567}
   m_Mesh: {fileID: 0}
---- !u!64 &9172981178145483788
+--- !u!64 &7551906527121417037
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73121,6 +73122,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &1612370482046384139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5865268919364884567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c54e2fab88019624d9d78ab4962c0a13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mutagenValue: 1
 --- !u!1 &6497752430803262902
 GameObject:
   m_ObjectHideFlags: 0
