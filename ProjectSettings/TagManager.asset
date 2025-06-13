@@ -13,6 +13,7 @@ TagManager:
   - Smoke
   - Projectile
   - Gun
+  - Oxygen
   layers:
   - Default
   - TransparentFX

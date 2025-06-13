@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3155614528730977722}
   - component: {fileID: 6408019569757186140}
   - component: {fileID: 388363723898065964}
-  - component: {fileID: 8652159517801234539}
   m_Layer: 0
   m_Name: Sphere (1)
   m_TagString: Untagged
@@ -34072,28 +34071,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1578183950982873571}
   m_Mesh: {fileID: 0}
---- !u!64 &8652159517801234539
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1578183950982873571}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &2010773057699200985
 GameObject:
   m_ObjectHideFlags: 0
@@ -34107,10 +34084,10 @@ GameObject:
   - component: {fileID: 2265315901586315803}
   - component: {fileID: 7750090615721712666}
   - component: {fileID: 8135606819400314633}
-  - component: {fileID: 4882942728353151076}
+  - component: {fileID: 642452410823072511}
   m_Layer: 0
   m_Name: O2
-  m_TagString: Untagged
+  m_TagString: Oxygen
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -68167,8 +68144,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2010773057699200985}
   m_Mesh: {fileID: 0}
---- !u!64 &4882942728353151076
-MeshCollider:
+--- !u!136 &642452410823072511
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -68182,10 +68159,11 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  serializedVersion: 2
+  m_Radius: 1.3007784
+  m_Height: 2.6015568
+  m_Direction: 1
+  m_Center: {x: 0.100719705, y: 0, z: 0.20005877}

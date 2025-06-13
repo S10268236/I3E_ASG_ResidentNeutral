@@ -4,148 +4,6 @@ using TMPro;
 
 public class PlayerBehaviour : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    // int currentScore = 0;
-    // int health = 50;
-    // bool canInteract = false;
-    // CoinBehaviour currentCoin = null;
-    // DoorBehaviour currentDoor = null;
-
-
-    // [SerializeField]
-    // GameObject projectile;
-
-    // [SerializeField]
-    // Transform spawnPoint;
-    // [SerializeField]
-    // float fireStrength = 100f;
-    // [SerializeField]
-    // float interactionDistance = 5f;
-    // void OnTriggerEnter(Collider other)
-    // {
-    //     Debug.Log(other.gameObject.name);
-    //     if (other.CompareTag("Door"))
-    //     {
-    //         canInteract = true;
-    //         currentDoor = other.GetComponent<DoorBehaviour>();
-    //     }
-    //     else if (other.CompareTag("Collectible"))
-    //     {
-    //         canInteract = true;
-    //         currentCoin = other.GetComponent<CoinBehaviour>();
-    //     }
-    // }
-    // void OnTriggerExit(Collider other)
-    // {
-    //     // Check if the player has a detected coin or door
-    //     if (currentCoin != null)
-    //     {
-    //         // If the object that exited the trigger is the same as the current coin
-    //         if (other.gameObject == currentCoin.gameObject)
-    //         {
-    //             // Set the canInteract flag to false
-    //             // Set the current coin to null
-    //             // This prevents the player from interacting with the coin
-    //             canInteract = false;
-    //             currentCoin = null;
-    //         }
-    //         else if (other.gameObject == currentDoor.gameObject)
-    //         {
-    //             canInteract = false;
-    //             currentDoor = null;
-    //         }
-    //     }
-    // }
-    // public void OnInteract()
-    // {
-    //     if (canInteract)
-    //     {
-    //         if (currentDoor != null)
-    //         {
-    //             Debug.Log("Interacting with door");
-    //             currentDoor.Interact();
-    //         }
-    //         else if (currentCoin != null)
-    //         {
-    //             Debug.Log("Interacting with coin");
-    //             currentCoin.Collect(this);
-
-    //         }
-    //     }
-    // }
-    // public void ModifyScore(int amt)
-    // {
-    //     currentScore += amt;
-    //     Debug.Log(currentScore);
-    // }
-    // void OnFire()
-    // {
-    //     Debug.Log("fire");
-    //     //Instantiate a new projectile at spawn point
-    //     //Store projectile to the 'newProjectile' variable
-    //     GameObject newProjectile = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
-    //     Vector3 fireForce = spawnPoint.forward * fireStrength;
-    //     newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
-    // }
-
-    // void Start()
-    // {
-    //     Debug.Log("Health: " + health);
-    // }
-    // void OnCollisionEnter(Collision collision)
-    // {
-    //     Debug.Log("Player collided with: " + collision.gameObject.name);
-
-    //     if (collision.gameObject.CompareTag("Collectible"))
-    //     {
-    //         ++currentScore;
-    //         Debug.Log("Score: " + currentScore);
-    //     }
-
-    // }
-    // void OnCollisionStay(Collision collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Healing") && health < 100)
-    //     {
-    //         ++health;
-    //         Debug.Log("Health: " + health);
-    //     }
-    //     if (collision.gameObject.CompareTag("Hazard") && health > 0)
-    //     {
-    //         --health;
-    //         Debug.Log("Health: " + health);
-    //         if (health <= 0)
-    //         {
-    //             Debug.Log("Player is Dead");
-    //         }
-    //     }
-    // }
-    // void Update()
-    // {
-    //     RaycastHit hitInfo;
-    //     Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
-    //     if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
-    //     {
-    //         //Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name); //Remove after testing works
-    //         if (hitInfo.collider.gameObject.CompareTag("Collectible"))
-    //         {
-    //             if (currentCoin != null)
-    //             {
-    //                 currentCoin.Unhighlight();
-    //             }
-    //             canInteract = true;
-    //             currentCoin = hitInfo.collider.gameObject.GetComponent<CoinBehaviour>();
-    //             currentCoin.Highlight();
-    //         }
-    //     }
-    //     else if (currentCoin != null)
-    //     {
-    //         currentCoin.Unhighlight();
-    //     }
-    // }
-
-    //New Code
-
     //Variables & Fields
 
     /// <Mutagen summary>
@@ -158,11 +16,12 @@ public class PlayerBehaviour : MonoBehaviour
     //Use to track time for damage
     private float damageTimer = 0f;
     //Track held breath time
-    private float holdBreath = 5f;
+    private float maxBreath = 5f;
+    private float currentBreath;
     //Track whether gun is obtained
     bool gotGun = false;
     //Onscreen overlay for taking damage
-    // public Image HealthImpact;
+    public Image HealthImpact;
     //Set a variable for Door, Mutagen and Gun, set it to null for future storage of Raycast collider
     DoorBehaviour currentDoor = null;
     MutagenBehaviour currentMutagen = null;
@@ -200,30 +59,34 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField]
     float fireStrength = 200f;
-    // private bool finished = false;
-    // [SerializeField]
-    // float respawnTime = 0f;
-    // float tenthSec = 0.1f;
+    bool hideInteractScreen = true;
+    [SerializeField]
+    TextMeshProUGUI InteractMessage;
 
     void Start()
     {
         currentPlayerHealth = maxPlayerHealth;
+        currentBreath = maxBreath;
         //Add text to UI
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
         mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
     void Update()
     {
+        //Show damage screen when damaged
+        DamageScreen();
         //Raycasting for interactables
         RaycastHit hitInfo;
         // Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
         //Raycast = true when hitting something
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
         {
-            // Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
+            Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
             //If collectible is within interaction range
             if (hitInfo.collider.gameObject.CompareTag("Collectible"))
             {
+                hideInteractScreen = false;
+                InteractScreen();
                 //Set currentMutagen to the one in front of player and allow use of Interact
                 currentMutagen = hitInfo.collider.gameObject.GetComponent<MutagenBehaviour>();
                 canInteract = true;
@@ -231,24 +94,72 @@ public class PlayerBehaviour : MonoBehaviour
             //If door is within interaction range
             else if (hitInfo.collider.gameObject.CompareTag("Door"))
             {
+                hideInteractScreen = false;
+                InteractScreen();
                 //Set currentDoor to the one in front of player and allow use of Interact
                 currentDoor = hitInfo.collider.gameObject.GetComponent<DoorBehaviour>();
                 canInteract = true;
             }
             else if (hitInfo.collider.gameObject.CompareTag("Gun"))
             {
+                hideInteractScreen = false;
+                InteractScreen();
                 currentGun = hitInfo.collider.gameObject.GetComponent<GunBehaviour>();
                 canInteract = true;
+            }
+            else if (hitInfo.collider.gameObject.CompareTag("Untagged"))
+            {
+                ResetRaycast();
             }
         }
         //Reset all variables to default state when Raycast = false
         else
         {
-            currentMutagen = null;
-            currentDoor = null;
-            currentGun = null;
-            canInteract = false;
+            ResetRaycast();
         }
+    }
+    /// <ResetRaycast summary>
+    /// Reset all the stored variables when raycast hits untagged and when raycast is false
+    /// </summary>
+    void ResetRaycast()
+    {
+        currentMutagen = null;
+        currentDoor = null;
+        currentGun = null;
+        canInteract = false;
+        hideInteractScreen = true;
+        InteractScreen();
+    }
+    void InteractScreen()
+    {
+        if (!hideInteractScreen)
+        //while raycast hits interactable,show this screen
+        {
+            float transparency = 1f;
+            Color imageColor = Color.white;
+            //Set alpha of imageColor to be transparency variable
+            imageColor.a = transparency;
+            InteractMessage.color = imageColor;
+        }
+        else
+        {
+            float transparency = 0f;
+            Color imageColor = Color.white;
+            //Set alpha of imageColor to be transparency variable
+            imageColor.a = transparency;
+            InteractMessage.color = imageColor;
+        }
+        
+    }
+    void DamageScreen()
+    {
+        //As damage is taken, transparency increases
+        float transparency = 1f - (currentPlayerHealth / 100f);
+        Color imageColor = Color.white;
+        //Set alpha of imageColor to be transparency variable
+        imageColor.a = transparency;
+        HealthImpact.color = imageColor;
+
     }
     /// <summary>
     /// Function to take damage and reset timer to control rate of damage taken
@@ -302,7 +213,13 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
-        // holdBreathText.text = holdBreath.ToString();
+        //Obtaining O2 resets breath
+        if (other.gameObject.CompareTag("Oxygen"))
+        {
+            currentBreath = maxBreath;
+            Destroy(other.gameObject);
+        }
+        // holdBreathText.text = maxBreath.ToString();
     }
 
     void OnTriggerStay(Collider other)
@@ -323,10 +240,10 @@ public class PlayerBehaviour : MonoBehaviour
         // Smoke-buffer time of held breath, then Damage Over Time
         else if (other.gameObject.CompareTag("Smoke") && currentPlayerHealth > 0)
         {
-            //Reduce holdBreath time to signify breath running out
-            holdBreath -= Time.deltaTime;
+            //Reduce maxBreath time to signify breath running out
+            currentBreath-= Time.deltaTime;
             //Once out, start taking damage per second
-            if (holdBreath <= 0)
+            if (currentBreath <= 0)
             {
                 //use damageTimer to time seconds per tick damage
                 damageTimer += Time.deltaTime;
@@ -358,7 +275,7 @@ public class PlayerBehaviour : MonoBehaviour
         //Resets damage timer if player leaves hazard zone
         damageTimer = 0f;
         //Reset Breath after leaving smoke zone
-        holdBreath = 5f;
+        currentBreath = maxBreath;
     }
 
     //What to do when interact is pressed
