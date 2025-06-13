@@ -14,6 +14,7 @@ TagManager:
   - Projectile
   - Gun
   - Oxygen
+  - Win
   layers:
   - Default
   - TransparentFX

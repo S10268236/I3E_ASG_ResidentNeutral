@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 using UnityEngine.ProBuilder.Shapes;
@@ -12,6 +13,8 @@ public class PlayerBehaviour : MonoBehaviour
     /// Score points & amount required to pass level, collectible and heals
     /// </summary>
     int mutagenAmt = 0;
+    private int totalMutagens = 10;
+    int mutagensLeft;
     public int maxPlayerHealth = 100;
     int currentPlayerHealth;
     bool canInteract = false;
@@ -28,6 +31,7 @@ public class PlayerBehaviour : MonoBehaviour
     DoorBehaviour currentDoor = null;
     MutagenBehaviour currentMutagen = null;
     GunBehaviour currentGun = null;
+    ExitBehaviour currentExit = null;
 
     [SerializeField]
     TextMeshProUGUI playerHealthText;
@@ -68,7 +72,10 @@ public class PlayerBehaviour : MonoBehaviour
     GameObject DeathScreen;
     [SerializeField]
     TextMeshProUGUI DeathMessage;
-
+    [SerializeField]
+    GameObject WinScreen;
+    [SerializeField]
+    TextMeshProUGUI WinMessage;
     void Start()
     {
         currentPlayerHealth = maxPlayerHealth;
@@ -110,6 +117,13 @@ public class PlayerBehaviour : MonoBehaviour
                 hideInteractScreen = false;
                 InteractScreen();
                 currentGun = hitInfo.collider.gameObject.GetComponent<GunBehaviour>();
+                canInteract = true;
+            }
+            else if (hitInfo.collider.gameObject.CompareTag("Win"))
+            {
+                hideInteractScreen = false;
+                InteractScreen();
+                currentExit = hitInfo.collider.gameObject.GetComponent<ExitBehaviour>();
                 canInteract = true;
             }
             else if (hitInfo.collider.gameObject.CompareTag("Untagged"))
@@ -290,27 +304,52 @@ public class PlayerBehaviour : MonoBehaviour
             //Check if Door or Collectible
             if (currentDoor != null)
             {
-                Debug.Log("Interacting with Door");
                 currentDoor.Interact();
             }
             else if (currentMutagen != null)
             {
-                Debug.Log("Mutagen GET");
                 currentMutagen.Collect(this);
                 ModifyHealth(50);
             }
             else if (currentGun != null)
             {
-                Debug.Log("Gun GET!");
                 currentGun.Collect(this);
                 gotGun = true;
             }
+            else if (currentExit != null)
+            {
+                if (mutagenAmt >= 10)
+                {
+                    StartCoroutine(WinLoadNew());
+                }
+                else
+                {
+                    StartCoroutine(NeedMore());
+                }
+            }
         }
+    }
+    IEnumerator WinLoadNew()
+    {
+        WinScreen.SetActive(true);
+        WinMessage.text = "Congratulations!\n\n You get this hideous Win Screen!";
+        yield return new WaitForSeconds(3);
+        WinMessage.text = "Game is Restarting";
+        yield return new WaitForSeconds(3);
+        SceneManager.LoadScene("SampleScene",LoadSceneMode.Single);
+    }
+    IEnumerator NeedMore()
+    {
+        WinMessage.text = "You're not strong enough, find " + mutagensLeft + " more mutagens";
+        yield return new WaitForSeconds(3);
+        WinMessage.text = null;
+
     }
     //Add to mutagen score when collected
     public void ModifyMutagenAmt(int amt)
     {
         mutagenAmt += amt;
+        mutagensLeft = totalMutagens - mutagenAmt;
         //Update new mutagen amount to UI
         mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
