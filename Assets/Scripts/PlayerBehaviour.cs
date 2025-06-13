@@ -152,7 +152,8 @@ public class PlayerBehaviour : MonoBehaviour
     /// Score points & amount required to pass level, collectible and heals
     /// </summary>
     int mutagenAmt = 0;
-    public int playerHealth = 100;
+    public int maxPlayerHealth = 100;
+    int currentPlayerHealth;
     bool canInteract = false;
     //Use to track time for damage
     private float damageTimer = 0f;
@@ -206,8 +207,9 @@ public class PlayerBehaviour : MonoBehaviour
 
     void Start()
     {
+        currentPlayerHealth = maxPlayerHealth;
         //Add text to UI
-        playerHealthText.text = "Health: " + playerHealth.ToString();
+        playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
         mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
     void Update()
@@ -254,30 +256,30 @@ public class PlayerBehaviour : MonoBehaviour
     /// <param name="dps"></param>
     private void DamageTaken(int dps)
     {
-        playerHealth -= dps;
-        playerHealthText.text = "Health: " + playerHealth.ToString();
+        currentPlayerHealth -= dps;
+        playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
         damageTimer = 0f;
     }
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collided with " + collision.gameObject.name);
         //Melee Enemy attack
-        if (collision.gameObject.CompareTag("Enemy") && playerHealth > 0 )
+        if (collision.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0 )
         {
             DamageTaken(enemyDPS);
         }
         // Death trigger
-        if (playerHealth <= 0)
+        if (currentPlayerHealth <= 0)
         {
             //Set health to 0 so hp isn't shorted
-            playerHealth = 0;
+            currentPlayerHealth = 0;
             Respawn();
         }
     }
     void OnCollisionStay(Collision collision)
     {
         Debug.Log("Collision with " + collision.collider.gameObject.name, collision.collider.gameObject);
-        if (collision.collider.gameObject.CompareTag("Enemy") && playerHealth > 0)
+        if (collision.collider.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0)
         {
             damageTimer += Time.deltaTime;
             if (damageTimer >= 2f)
@@ -286,10 +288,10 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
         //Death trigger
-        if (playerHealth <= 0)
+        if (currentPlayerHealth <= 0)
         {
             //Set health to 0 so hp isn't shorted
-            playerHealth = 0;
+            currentPlayerHealth = 0;
             Respawn();
         }
     }
@@ -306,20 +308,20 @@ public class PlayerBehaviour : MonoBehaviour
     void OnTriggerStay(Collider other)
     {
         //Acid Damage Over Time
-        if (other.gameObject.CompareTag("Acid") && playerHealth > 0)
+        if (other.gameObject.CompareTag("Acid") && currentPlayerHealth > 0)
         {
             //Track time
             damageTimer += Time.deltaTime;
             if (damageTimer >= 2f)
             {
                 DamageTaken(acidDPS);
-                // playerHealth -= acidDPS;
-                // playerHealthText.text = "Health: " + playerHealth.ToString();
+                // currentPlayerHealth -= acidDPS;
+                // playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
                 // damageTimer = 0f;
             }
         }
         // Smoke-buffer time of held breath, then Damage Over Time
-        else if (other.gameObject.CompareTag("Smoke") && playerHealth > 0)
+        else if (other.gameObject.CompareTag("Smoke") && currentPlayerHealth > 0)
         {
             //Reduce holdBreath time to signify breath running out
             holdBreath -= Time.deltaTime;
@@ -335,21 +337,21 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
         //Death Trigger
-        if (playerHealth <= 0)
+        if (currentPlayerHealth <= 0)
         {
-            playerHealth = 0;
+            currentPlayerHealth = 0;
             Respawn();
         }
     }
     private void Respawn()
     {
-        playerHealth += 100;
+        currentPlayerHealth = maxPlayerHealth;
         Debug.Log("Respawned");
         Debug.Log("Before: " + transform.position);
         transform.position = respawnPoint.position;
         Debug.Log("After:" + transform.position);
         transform.rotation = respawnPoint.rotation;
-        playerHealthText.text = "Health: " + playerHealth.ToString();
+        playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
     }
     void OnTriggerExit(Collider other)
     {
@@ -375,6 +377,7 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 Debug.Log("Mutagen GET");
                 currentMutagen.Collect(this);
+                ModifyHealth(50);
             }
             else if (currentGun != null)
             {
@@ -391,6 +394,22 @@ public class PlayerBehaviour : MonoBehaviour
         //Update new mutagen amount to UI
         mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
+    //Mutagens heal by amount specified in function, sets health to max health if it goes over
+    void ModifyHealth(int heal)
+    {
+        if (currentPlayerHealth + heal > maxPlayerHealth)
+        {
+            currentPlayerHealth = maxPlayerHealth;
+        }
+        else
+        {
+            currentPlayerHealth += heal;
+        }
+        playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
+    }
+    /// <summary>
+    /// Fire a projectile with forward motion
+    /// </summary>
     public void OnFire()
     {
         if (gotGun)
