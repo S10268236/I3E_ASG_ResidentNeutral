@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -62,6 +63,10 @@ public class PlayerBehaviour : MonoBehaviour
     bool hideInteractScreen = true;
     [SerializeField]
     TextMeshProUGUI InteractMessage;
+    [SerializeField]
+    GameObject DeathScreen;
+    [SerializeField]
+    TextMeshProUGUI DeathMessage;
 
     void Start()
     {
@@ -130,6 +135,9 @@ public class PlayerBehaviour : MonoBehaviour
         hideInteractScreen = true;
         InteractScreen();
     }
+    /// <InteractScreen summary>
+    /// Default is hidden, text is transparent, Show Interact screen when able to interact
+    /// </summary>
     void InteractScreen()
     {
         if (!hideInteractScreen)
@@ -149,7 +157,6 @@ public class PlayerBehaviour : MonoBehaviour
             imageColor.a = transparency;
             InteractMessage.color = imageColor;
         }
-        
     }
     void DamageScreen()
     {
@@ -170,6 +177,12 @@ public class PlayerBehaviour : MonoBehaviour
         currentPlayerHealth -= dps;
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
         damageTimer = 0f;
+        //Death Trigger
+        if (currentPlayerHealth <= 0)
+        {
+            currentPlayerHealth = 0;
+            StartCoroutine(Respawn());
+        }
     }
     void OnCollisionEnter(Collision collision)
     {
@@ -178,13 +191,6 @@ public class PlayerBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0 )
         {
             DamageTaken(enemyDPS);
-        }
-        // Death trigger
-        if (currentPlayerHealth <= 0)
-        {
-            //Set health to 0 so hp isn't shorted
-            currentPlayerHealth = 0;
-            Respawn();
         }
     }
     void OnCollisionStay(Collision collision)
@@ -197,13 +203,6 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 DamageTaken(enemyDPS);
             }
-        }
-        //Death trigger
-        if (currentPlayerHealth <= 0)
-        {
-            //Set health to 0 so hp isn't shorted
-            currentPlayerHealth = 0;
-            Respawn();
         }
     }
     void OnCollisionExit(Collision collision)
@@ -253,23 +252,20 @@ public class PlayerBehaviour : MonoBehaviour
                 }
             }
         }
-        //Death Trigger
-        if (currentPlayerHealth <= 0)
-        {
-            currentPlayerHealth = 0;
-            Respawn();
-        }
     }
-    private void Respawn()
+    IEnumerator Respawn()
     {
+        DeathScreen.SetActive(true);
+        DeathMessage.text = "You Are Dead";
         currentPlayerHealth = maxPlayerHealth;
-        Debug.Log("Respawned");
-        Debug.Log("Before: " + transform.position);
         transform.position = respawnPoint.position;
-        Debug.Log("After:" + transform.position);
         transform.rotation = respawnPoint.rotation;
+        yield return new WaitForSeconds(2);
+        DeathScreen.SetActive(false);
+        DeathMessage.text = null;
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
     }
+
     void OnTriggerExit(Collider other)
     {
         //Resets damage timer if player leaves hazard zone
