@@ -19,6 +19,10 @@ public class EnemyBehaviour : MonoBehaviour
     public float sightRange;
     public bool playerInSight;
     public NavMeshAgent agent;
+    [SerializeField]
+    GameObject MutagenLoot;
+    [SerializeField]
+    Transform LootSpawn;
 
     private void Awake()
     {
@@ -70,12 +74,14 @@ public class EnemyBehaviour : MonoBehaviour
         EnemyHealth -= damage;
         if (EnemyHealth <= 0)
         {
-            Invoke(nameof(DestroyEnemy), 0.5f);
+            Invoke(nameof(Loot), 0.5f);
         }
     }
-    private void DestroyEnemy()
+    private void Loot()
     {
         Destroy(gameObject);
+        GameObject newMutagenLoot = Instantiate(MutagenLoot, LootSpawn.position, LootSpawn.rotation);
+
     }
     private void OnDrawGizmosSelected()
     {

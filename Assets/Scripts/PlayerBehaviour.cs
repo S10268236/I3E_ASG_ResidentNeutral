@@ -332,17 +332,29 @@ public class PlayerBehaviour : MonoBehaviour
     IEnumerator WinLoadNew()
     {
         WinScreen.SetActive(true);
+        transform.position = respawnPoint.position;
+        transform.rotation = respawnPoint.rotation;
         WinMessage.text = "Congratulations!\n\n You get this hideous Win Screen!";
         yield return new WaitForSeconds(3);
         WinMessage.text = "Game is Restarting";
         yield return new WaitForSeconds(3);
+        WinScreen.SetActive(false);
         SceneManager.LoadScene("SampleScene",LoadSceneMode.Single);
     }
     IEnumerator NeedMore()
     {
-        WinMessage.text = "You're not strong enough, find " + mutagensLeft + " more mutagens";
-        yield return new WaitForSeconds(3);
-        WinMessage.text = null;
+        if (mutagensLeft > 1)
+        {
+            WinMessage.text = "You're not strong enough, find " + mutagensLeft + " more mutagens";
+            yield return new WaitForSeconds(3);
+            WinMessage.text = null;
+        }
+        else
+        {
+            WinMessage.text = "You're not strong enough, find the Last";
+            yield return new WaitForSeconds(3);
+            WinMessage.text = null;
+        }
 
     }
     //Add to mutagen score when collected
