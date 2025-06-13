@@ -152,7 +152,7 @@ public class PlayerBehaviour : MonoBehaviour
     /// Score points & amount required to pass level, collectible and heals
     /// </summary>
     int mutagenAmt = 0;
-    int playerHealth = 100;
+    public int playerHealth = 100;
     bool canInteract = false;
     //Use to track time for damage
     private float damageTimer = 0f;
@@ -181,9 +181,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField]
     Transform spawnPoint;
-
-    [SerializeField]
-    Transform respawnPoint;
 
     [SerializeField]
     float interactionDistance = 5f;
@@ -242,11 +239,12 @@ public class PlayerBehaviour : MonoBehaviour
             currentGun = null;
             canInteract = false;
         }
-        if (playerHealth <= 0)
-        {
-            Debug.Log("You are Dead");
-            respawn();
-        }
+        // if (playerHealth <= 0)
+        // {
+        //     Debug.Log("You are Dead");
+        //     playerDead = true;
+        //     respawn();
+        // }
     }
     void OnCollisionEnter(Collision collision)
     {
@@ -292,10 +290,6 @@ public class PlayerBehaviour : MonoBehaviour
     private void respawn()
     {
         Debug.Log("Respawned");
-        transform.position = respawnPoint.transform.position;
-        transform.rotation = respawnPoint.transform.rotation;
-        // Rigidbody moveRigidBody = GetComponent<Rigidbody>();
-        // moveRigidBody.MovePosition(respawnPoint.transform.position);
         playerHealth += 100;
         playerHealthText.text = "Health: " + playerHealth.ToString();
     }
