@@ -7,7 +7,7 @@ public class DoorBehaviour : MonoBehaviour
     /// </summary>
 
     //Set default state of door to be closed
-    private bool isOpen = false;
+    public bool isOpen = false;
     //Variable for vectors for when closed
     private Vector3 closedRotation;
     //Variable for vectors for when open

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.ProBuilder.Shapes;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -86,7 +87,6 @@ public class PlayerBehaviour : MonoBehaviour
         //Raycast = true when hitting something
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
         {
-            Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
             //If collectible is within interaction range
             if (hitInfo.collider.gameObject.CompareTag("Collectible"))
             {
@@ -186,7 +186,6 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collided with " + collision.gameObject.name);
         //Melee Enemy attack
         if (collision.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0 )
         {
@@ -195,7 +194,6 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void OnCollisionStay(Collision collision)
     {
-        Debug.Log("Collision with " + collision.collider.gameObject.name, collision.collider.gameObject);
         if (collision.collider.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0)
         {
             damageTimer += Time.deltaTime;
@@ -272,6 +270,15 @@ public class PlayerBehaviour : MonoBehaviour
         damageTimer = 0f;
         //Reset Breath after leaving smoke zone
         currentBreath = maxBreath;
+        if (other.gameObject.CompareTag("Door"))
+        {
+            currentDoor = other.gameObject.GetComponent<DoorBehaviour>();
+            if (currentDoor.isOpen == true)
+            {
+                currentDoor.Interact();
+            }
+            currentDoor = null;
+        }
     }
 
     //What to do when interact is pressed
