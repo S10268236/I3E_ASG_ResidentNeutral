@@ -51,7 +51,7 @@ public class PlayerBehaviour : MonoBehaviour
     Transform respawnPoint;
 
     [SerializeField]
-    float interactionDistance = 5f;
+    float interactionDistance = 4f;
 
     [SerializeField]
     int acidDPS = 40;
@@ -291,8 +291,9 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 currentDoor.Interact();
             }
-            currentDoor = null;
+            
         }
+        currentDoor = null;
     }
 
     //What to do when interact is pressed

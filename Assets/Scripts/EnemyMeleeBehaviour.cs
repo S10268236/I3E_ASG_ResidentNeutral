@@ -23,6 +23,7 @@ public class EnemyBehaviour : MonoBehaviour
     GameObject MutagenLoot;
     [SerializeField]
     Transform LootSpawn;
+    private bool isLooted = false;
 
     private void Awake()
     {
@@ -72,9 +73,10 @@ public class EnemyBehaviour : MonoBehaviour
     public void TakeDamage(int damage)
     {
         EnemyHealth -= damage;
-        if (EnemyHealth <= 0)
+        if (EnemyHealth <= 0 && !isLooted)
         {
-            Invoke(nameof(Loot), 0.5f);
+            isLooted = true;
+            Invoke(nameof(Loot),0.5f);
         }
     }
     private void Loot()
