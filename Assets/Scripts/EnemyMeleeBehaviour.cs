@@ -13,12 +13,14 @@ public class EnemyBehaviour : MonoBehaviour
     // public float timeBetweenAttacks;
     // bool alreadyAttacked;
     public float EnemyHealth;
+    //Time between walks
+    private float walkTime = 0f;
     //States
     public float sightRange;
     public bool playerInSight;
     public NavMeshAgent agent;
 
-    private void Angered()
+    private void Awake()
     {
         Player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
@@ -40,12 +42,14 @@ public class EnemyBehaviour : MonoBehaviour
         if (walkPointSet)
         {
             agent.SetDestination(walkPoint);
+            walkTime += Time.deltaTime;
         }
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
         //Walkpoint Reached
-        if (distanceToWalkPoint.magnitude < 1f)
+        if (distanceToWalkPoint.magnitude < 1f || walkTime >= 5f)
         {
             walkPointSet = false;
+            walkTime = 0f;
         }
     }
     private void SearchWalkPoint()
