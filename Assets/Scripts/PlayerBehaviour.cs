@@ -181,20 +181,28 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField]
     Transform spawnPoint;
+    [SerializeField]
+    Transform respawnPoint;
 
     [SerializeField]
     float interactionDistance = 5f;
 
     [SerializeField]
-    int acidDPS = 20;
+    int acidDPS = 40;
     [SerializeField]
     int smokeDPS = 10;
+    [SerializeField]
+    int enemyDPS = 10;
 
     [SerializeField]
     GameObject projectile;
 
     [SerializeField]
     float fireStrength = 200f;
+    // private bool finished = false;
+    // [SerializeField]
+    // float respawnTime = 0f;
+    // float tenthSec = 0.1f;
 
     void Start()
     {
@@ -239,21 +247,62 @@ public class PlayerBehaviour : MonoBehaviour
             currentGun = null;
             canInteract = false;
         }
-        // if (playerHealth <= 0)
-        // {
-        //     Debug.Log("You are Dead");
-        //     playerDead = true;
-        //     respawn();
-        // }
+    }
+    /// <summary>
+    /// Function to take damage and reset timer to control rate of damage taken
+    /// </summary>
+    /// <param name="dps"></param>
+    private void DamageTaken(int dps)
+    {
+        playerHealth -= dps;
+        playerHealthText.text = "Health: " + playerHealth.ToString();
+        damageTimer = 0f;
     }
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collided with " + collision.gameObject.name);
+        //Melee Enemy attack
+        if (collision.gameObject.CompareTag("Enemy") && playerHealth > 0 )
+        {
+            DamageTaken(enemyDPS);
+        }
+        // Death trigger
+        if (playerHealth <= 0)
+        {
+            //Set health to 0 so hp isn't shorted
+            playerHealth = 0;
+            Respawn();
+        }
+    }
+    void OnCollisionStay(Collision collision)
+    {
+        Debug.Log("Collision with " + collision.collider.gameObject.name, collision.collider.gameObject);
+        if (collision.collider.gameObject.CompareTag("Enemy") && playerHealth > 0)
+        {
+            damageTimer += Time.deltaTime;
+            if (damageTimer >= 2f)
+            {
+                DamageTaken(enemyDPS);
+            }
+        }
+        //Death trigger
+        if (playerHealth <= 0)
+        {
+            //Set health to 0 so hp isn't shorted
+            playerHealth = 0;
+            Respawn();
+        }
+    }
+    void OnCollisionExit(Collision collision)
+    {
+        //Reset damage timer
+        damageTimer = 0f;
     }
     void OnTriggerEnter(Collider other)
     {
         // holdBreathText.text = holdBreath.ToString();
     }
+
     void OnTriggerStay(Collider other)
     {
         //Acid Damage Over Time
@@ -263,12 +312,13 @@ public class PlayerBehaviour : MonoBehaviour
             damageTimer += Time.deltaTime;
             if (damageTimer >= 2f)
             {
-                playerHealth -= acidDPS;
-                playerHealthText.text = "Health: " + playerHealth.ToString();
-                damageTimer = 0f;
+                DamageTaken(acidDPS);
+                // playerHealth -= acidDPS;
+                // playerHealthText.text = "Health: " + playerHealth.ToString();
+                // damageTimer = 0f;
             }
         }
-        //Smoke-buffer time of held breath, then Damage Over Time
+        // Smoke-buffer time of held breath, then Damage Over Time
         else if (other.gameObject.CompareTag("Smoke") && playerHealth > 0)
         {
             //Reduce holdBreath time to signify breath running out
@@ -280,17 +330,25 @@ public class PlayerBehaviour : MonoBehaviour
                 damageTimer += Time.deltaTime;
                 if (damageTimer >= 2f)
                 {
-                    playerHealth -= smokeDPS;
-                    playerHealthText.text = "Health: " + playerHealth.ToString();
-                    damageTimer = 0f;
+                    DamageTaken(smokeDPS);
                 }
             }
         }
+        //Death Trigger
+        if (playerHealth <= 0)
+        {
+            playerHealth = 0;
+            Respawn();
+        }
     }
-    private void respawn()
+    private void Respawn()
     {
-        Debug.Log("Respawned");
         playerHealth += 100;
+        Debug.Log("Respawned");
+        Debug.Log("Before: " + transform.position);
+        transform.position = respawnPoint.position;
+        Debug.Log("After:" + transform.position);
+        transform.rotation = respawnPoint.rotation;
         playerHealthText.text = "Health: " + playerHealth.ToString();
     }
     void OnTriggerExit(Collider other)

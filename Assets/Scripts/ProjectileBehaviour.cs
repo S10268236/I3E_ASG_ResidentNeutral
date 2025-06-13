@@ -8,7 +8,7 @@ public class ProjectileBehaviour : MonoBehaviour
         Destroy(gameObject);
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            collision.gameObject.GetComponent<EnemyBehaviour>().TakeDamage(50);
+            collision.gameObject.GetComponent<EnemyBehaviour>().TakeDamage(20);
         }
         
     }
