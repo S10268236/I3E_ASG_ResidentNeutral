@@ -87,6 +87,7 @@ public class PlayerBehaviour : MonoBehaviour
     float mutagenHealAmt = 50f;
     //Audio Variables
     public AudioSource ShootAudio;
+    public AudioSource Coughing;
     //Gun Fire rate Variables
     private bool gunFired = false;
     [SerializeField]
@@ -223,7 +224,10 @@ public class PlayerBehaviour : MonoBehaviour
             currentOxygen = other.gameObject.GetComponent<OxygenBehaviour>();
             currentOxygen.Collect(this);
         }
-        // holdBreathText.text = maxBreath.ToString();
+        if (other.gameObject.CompareTag("Smoke") && currentPlayerHealth > 0)
+        {
+            Coughing.Play();
+        }
     }
 
     void OnTriggerStay(Collider other)
@@ -243,10 +247,6 @@ public class PlayerBehaviour : MonoBehaviour
         {
             //Reduce maxBreath time to signify breath running out
             currentBreath -= Time.deltaTime;
-            if (currentBreath % 1 == 0)
-            {
-                holdBreathText.text = currentBreath.ToString();
-            }
 
             //Once out, start taking damage per second
             if (currentBreath <= 0)
@@ -275,6 +275,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
+        Coughing.Pause();
         //Debug.Log("Leaving trigger:" + other.gameObject.name);
         //Resets damage timer if player leaves hazard zone
         damageTimer = 0f;
@@ -402,7 +403,6 @@ public class PlayerBehaviour : MonoBehaviour
                 newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
                 ShootAudio.Play();
                 StartCoroutine(FireRate());
-                gunFired = false;
             }
 
         }
@@ -411,5 +411,6 @@ public class PlayerBehaviour : MonoBehaviour
     {
         gunFired = true;
         yield return new WaitForSeconds(1);
+        gunFired = false;
     }
 }
