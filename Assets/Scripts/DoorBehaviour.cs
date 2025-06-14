@@ -7,13 +7,12 @@ public class DoorBehaviour : MonoBehaviour
     /// </summary>
 
     //Set default state of door to be closed
-    public bool isOpen = false;
+    public bool Closed = true;
     //Variable for vectors for when closed
     private Vector3 closedRotation;
     //Variable for vectors for when open
     private Vector3 openRotation;
     AudioSource doorOpenAudio;
-    AudioSource doorCloseAudio;
 
     void Start()
     {
@@ -26,21 +25,19 @@ public class DoorBehaviour : MonoBehaviour
     public void Interact()
     {
         //Check whether Door is open or closed
-        if (!isOpen)
+        if (Closed)
         {
             //Play Open audio
             doorOpenAudio.Play();
             //Set transform vectors to the open vectors
             transform.eulerAngles = openRotation;
-            isOpen = true;
+            Closed = false;
         }
         else
         {
-            //Play Close audio
-            doorCloseAudio.Play();
             //Set transform vectors to the closed vectors
             transform.eulerAngles = closedRotation;
-            isOpen = false;
+            Closed = true;
         }
     }
 }

@@ -73135,6 +73135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mutagenValue: 1
+  CollectSound: {fileID: 8300000, guid: 29726c349dbf64b0aadfe8c9ec00d728, type: 3}
 --- !u!1 &6497752430803262902
 GameObject:
   m_ObjectHideFlags: 0

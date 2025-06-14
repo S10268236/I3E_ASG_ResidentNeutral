@@ -262,7 +262,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        Debug.Log("Leaving trigger:" + other.gameObject.name);
+        //Debug.Log("Leaving trigger:" + other.gameObject.name);
         //Resets damage timer if player leaves hazard zone
         damageTimer = 0f;
         //Reset Breath after leaving smoke zone
@@ -271,7 +271,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.CompareTag("Door"))
         {
             currentDoor = other.gameObject.GetComponent<DoorBehaviour>();
-            if (currentDoor.isOpen == true)
+            if (currentDoor.Closed != true)
             {
             Debug.Log("AutoClose");
                 currentDoor.Interact();
