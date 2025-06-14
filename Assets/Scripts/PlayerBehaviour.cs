@@ -86,8 +86,11 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     float mutagenHealAmt = 50f;
     //Audio Variables
-    // public AudioSource ShootAudio;
-    // public AudioSource Footsteps;
+    public AudioSource ShootAudio;
+    //Gun Fire rate Variables
+    private bool gunFired = false;
+    [SerializeField]
+    // private float FireRate;
     void Start()
     {
         currentPlayerHealth = maxPlayerHealth;
@@ -190,7 +193,7 @@ public class PlayerBehaviour : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         //Melee Enemy attack
-        if (collision.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0 )
+        if (collision.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0)
         {
             DamageTaken(enemyDPS);
         }
@@ -239,7 +242,12 @@ public class PlayerBehaviour : MonoBehaviour
         else if (other.gameObject.CompareTag("Smoke") && currentPlayerHealth > 0)
         {
             //Reduce maxBreath time to signify breath running out
-            currentBreath-= Time.deltaTime;
+            currentBreath -= Time.deltaTime;
+            if (currentBreath % 1 == 0)
+            {
+                holdBreathText.text = currentBreath.ToString();
+            }
+
             //Once out, start taking damage per second
             if (currentBreath <= 0)
             {
@@ -278,7 +286,7 @@ public class PlayerBehaviour : MonoBehaviour
             currentDoor = other.gameObject.GetComponent<DoorBehaviour>();
             if (currentDoor.Closed != true)
             {
-            Debug.Log("AutoClose");
+                Debug.Log("AutoClose");
                 currentDoor.Interact();
             }
 
@@ -335,7 +343,7 @@ public class PlayerBehaviour : MonoBehaviour
         yield return new WaitForSeconds(3);
         WinScreen.SetActive(false);
         DeathScreen.SetActive(false);
-        SceneManager.LoadScene("SampleScene",LoadSceneMode.Single);
+        SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
     }
     IEnumerator NeedMore()
     {
@@ -385,11 +393,23 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (gotGun)
         {
-            //Instantiate a new projectile at spawn point
-            //Store projectile to newProjectile variable
-            GameObject newProjectile = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
-            Vector3 fireForce = spawnPoint.forward * fireStrength;
-            newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
+            if (gunFired != true)
+            {
+                //Instantiate a new projectile at spawn point
+                //Store projectile to newProjectile variable
+                GameObject newProjectile = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
+                Vector3 fireForce = spawnPoint.forward * fireStrength;
+                newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
+                ShootAudio.Play();
+                StartCoroutine(FireRate());
+                gunFired = false;
+            }
+
         }
+    }
+    IEnumerator FireRate()
+    {
+        gunFired = true;
+        yield return new WaitForSeconds(1);
     }
 }
