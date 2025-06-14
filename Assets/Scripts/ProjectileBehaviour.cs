@@ -6,7 +6,7 @@ public class ProjectileBehaviour : MonoBehaviour
     float ProjectileDamage = 20f;
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Projectile collided with" + collision.gameObject.name);
+        //Debug.Log("Projectile collided with" + collision.gameObject.name);
         Destroy(gameObject);
         if (collision.gameObject.CompareTag("Enemy"))
         {

@@ -32,6 +32,7 @@ public class PlayerBehaviour : MonoBehaviour
     MutagenBehaviour currentMutagen = null;
     GunBehaviour currentGun = null;
     ExitBehaviour currentExit = null;
+    OxygenBehaviour currentOxygen = null;
 
     [SerializeField]
     TextMeshProUGUI playerHealthText;
@@ -84,6 +85,9 @@ public class PlayerBehaviour : MonoBehaviour
     TextMeshProUGUI WinMessage;
     [SerializeField]
     float mutagenHealAmt = 50f;
+    //Audio Variables
+    // public AudioSource ShootAudio;
+    // public AudioSource Footsteps;
     void Start()
     {
         currentPlayerHealth = maxPlayerHealth;
@@ -213,7 +217,8 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.CompareTag("Oxygen"))
         {
             currentBreath = maxBreath;
-            Destroy(other.gameObject);
+            currentOxygen = other.gameObject.GetComponent<OxygenBehaviour>();
+            currentOxygen.Collect(this);
         }
         // holdBreathText.text = maxBreath.ToString();
     }

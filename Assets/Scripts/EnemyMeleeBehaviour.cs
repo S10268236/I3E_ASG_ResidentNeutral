@@ -27,6 +27,8 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField]
     Transform LootSpawn;
     private bool isLooted = false;
+    AudioSource AttackAudioSource;
+    private bool SoundPlayed = false;
 
     private void Awake()
     {
@@ -38,6 +40,7 @@ public class EnemyBehaviour : MonoBehaviour
     void Start()
     {
         EnemyHealth = MaxEnemyHealth;
+        AttackAudioSource = GetComponent<AudioSource>();
     }
     void Update()
     {
@@ -76,8 +79,11 @@ public class EnemyBehaviour : MonoBehaviour
     }
     private void ChasePlayer()
     {
+        Debug.Log("Sound played" + SoundPlayed);
+        PlaySound();
         transform.LookAt(Player);
         agent.SetDestination(Player.position);
+
     }
     public void TakeDamage(float damage)
     {
@@ -101,5 +107,14 @@ public class EnemyBehaviour : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, sightRange);
+    }
+    private void PlaySound()
+    {
+        if (SoundPlayed != true)
+        {
+            AttackAudioSource.Play();
+            SoundPlayed = true;
+        }
+        
     }
 }
