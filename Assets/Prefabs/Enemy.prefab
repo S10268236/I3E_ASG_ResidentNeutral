@@ -35914,7 +35914,9 @@ MonoBehaviour:
   EnemyHealth: 100
   sightRange: 10
   playerInSight: 0
-  agent: {fileID: 0}
+  agent: {fileID: 1554006036775700482}
+  MutagenLoot: {fileID: 5865268919364884567, guid: bb2b8153d2ea48040b27bab4478456c8, type: 3}
+  LootSpawn: {fileID: 4527887295143076610}
 --- !u!195 &1554006036775700482
 NavMeshAgent:
   m_ObjectHideFlags: 0

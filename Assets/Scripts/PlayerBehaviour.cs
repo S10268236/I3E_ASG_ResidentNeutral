@@ -48,10 +48,12 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     Transform spawnPoint;
     [SerializeField]
+    Transform GunLocation;
+    [SerializeField]
     Transform respawnPoint;
 
     [SerializeField]
-    float interactionDistance = 4f;
+    float interactionDistance = 5f;
 
     [SerializeField]
     int acidDPS = 40;
@@ -62,10 +64,14 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField]
     GameObject projectile;
+    [SerializeField]
+    GameObject GunModel;
+    [SerializeField]
+    GameObject GunParentFollow;
 
     [SerializeField]
     float fireStrength = 200f;
-    bool hideInteractScreen = true;
+
     [SerializeField]
     TextMeshProUGUI InteractMessage;
     [SerializeField]
@@ -76,6 +82,8 @@ public class PlayerBehaviour : MonoBehaviour
     GameObject WinScreen;
     [SerializeField]
     TextMeshProUGUI WinMessage;
+    [SerializeField]
+    int mutagenHealAmt = 50;
     void Start()
     {
         currentPlayerHealth = maxPlayerHealth;
@@ -90,15 +98,17 @@ public class PlayerBehaviour : MonoBehaviour
         DamageScreen();
         //Raycasting for interactables
         RaycastHit hitInfo;
-        // Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
+        //Show Raycast ray for debugging
+        Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
         //Raycast = true when hitting something
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
         {
             //If collectible is within interaction range
             if (hitInfo.collider.gameObject.CompareTag("Collectible"))
             {
-                hideInteractScreen = false;
-                InteractScreen();
+                // hideInteractScreen = false;
+                // InteractScreen();
+                InteractMessage.text = "[E] Mutagen \n+" + mutagenHealAmt + "HP";
                 //Set currentMutagen to the one in front of player and allow use of Interact
                 currentMutagen = hitInfo.collider.gameObject.GetComponent<MutagenBehaviour>();
                 canInteract = true;
@@ -106,23 +116,26 @@ public class PlayerBehaviour : MonoBehaviour
             //If door is within interaction range
             else if (hitInfo.collider.gameObject.CompareTag("Door"))
             {
-                hideInteractScreen = false;
-                InteractScreen();
+                // hideInteractScreen = false;
+                // InteractScreen();
+                InteractMessage.text = "[E] Interact";
                 //Set currentDoor to the one in front of player and allow use of Interact
                 currentDoor = hitInfo.collider.gameObject.GetComponent<DoorBehaviour>();
                 canInteract = true;
             }
             else if (hitInfo.collider.gameObject.CompareTag("Gun"))
             {
-                hideInteractScreen = false;
-                InteractScreen();
+                // hideInteractScreen = false;
+                // InteractScreen();
+                InteractMessage.text = "[E] Pickup Gun";
                 currentGun = hitInfo.collider.gameObject.GetComponent<GunBehaviour>();
                 canInteract = true;
             }
             else if (hitInfo.collider.gameObject.CompareTag("Win"))
             {
-                hideInteractScreen = false;
-                InteractScreen();
+                // hideInteractScreen = false;
+                // InteractScreen();
+                InteractMessage.text = "[E] Exit";
                 currentExit = hitInfo.collider.gameObject.GetComponent<ExitBehaviour>();
                 canInteract = true;
             }
@@ -146,32 +159,33 @@ public class PlayerBehaviour : MonoBehaviour
         currentDoor = null;
         currentGun = null;
         canInteract = false;
-        hideInteractScreen = true;
-        InteractScreen();
+        InteractMessage.text = null;
+        // hideInteractScreen = true;
+        // InteractScreen();
     }
     /// <InteractScreen summary>
     /// Default is hidden, text is transparent, Show Interact screen when able to interact
     /// </summary>
-    void InteractScreen()
-    {
-        if (!hideInteractScreen)
-        //while raycast hits interactable,show this screen
-        {
-            float transparency = 1f;
-            Color imageColor = Color.white;
-            //Set alpha of imageColor to be transparency variable
-            imageColor.a = transparency;
-            InteractMessage.color = imageColor;
-        }
-        else
-        {
-            float transparency = 0f;
-            Color imageColor = Color.white;
-            //Set alpha of imageColor to be transparency variable
-            imageColor.a = transparency;
-            InteractMessage.color = imageColor;
-        }
-    }
+    // void InteractScreen()
+    // {
+    //     if (!hideInteractScreen)
+    //     //while raycast hits interactable,show this screen
+    //     {
+    //         float transparency = 1f;
+    //         Color imageColor = Color.white;
+    //         //Set alpha of imageColor to be transparency variable
+    //         imageColor.a = transparency;
+    //         InteractMessage.color = imageColor;
+    //     }
+    //     else
+    //     {
+    //         float transparency = 0f;
+    //         Color imageColor = Color.white;
+    //         //Set alpha of imageColor to be transparency variable
+    //         imageColor.a = transparency;
+    //         InteractMessage.color = imageColor;
+    //     }
+    // }
     void DamageScreen()
     {
         //As damage is taken, transparency increases
@@ -280,18 +294,21 @@ public class PlayerBehaviour : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
+        Debug.Log("Leaving trigger:" + other.gameObject.name);
         //Resets damage timer if player leaves hazard zone
         damageTimer = 0f;
         //Reset Breath after leaving smoke zone
         currentBreath = maxBreath;
+        //Closes door when leaving trigger zone
         if (other.gameObject.CompareTag("Door"))
         {
             currentDoor = other.gameObject.GetComponent<DoorBehaviour>();
             if (currentDoor.isOpen == true)
             {
+            Debug.Log("AutoClose");
                 currentDoor.Interact();
             }
-            
+
         }
         currentDoor = null;
     }
@@ -316,6 +333,9 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 currentGun.Collect(this);
                 gotGun = true;
+                GameObject showGun = Instantiate(GunModel, GunLocation.position, GunLocation.rotation);
+                Transform showGunTransform = showGun.transform;
+                showGunTransform.SetParent(GunParentFollow.transform);
             }
             else if (currentExit != null)
             {
@@ -367,15 +387,15 @@ public class PlayerBehaviour : MonoBehaviour
         mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
     }
     //Mutagens heal by amount specified in function, sets health to max health if it goes over
-    void ModifyHealth(int heal)
+    void ModifyHealth(int mutagenHealAmt)
     {
-        if (currentPlayerHealth + heal > maxPlayerHealth)
+        if (currentPlayerHealth + mutagenHealAmt > maxPlayerHealth)
         {
             currentPlayerHealth = maxPlayerHealth;
         }
         else
         {
-            currentPlayerHealth += heal;
+            currentPlayerHealth += mutagenHealAmt;
         }
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
     }
