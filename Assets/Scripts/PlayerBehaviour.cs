@@ -12,11 +12,11 @@ public class PlayerBehaviour : MonoBehaviour
     /// <Mutagen summary>
     /// Score points & amount required to pass level, collectible and heals
     /// </summary>
-    int mutagenAmt = 0;
+    int mutagenScore = 0;
     private int totalMutagens = 10;
     int mutagensLeft;
-    public int maxPlayerHealth = 100;
-    int currentPlayerHealth;
+    public float maxPlayerHealth = 100f;
+    float currentPlayerHealth;
     bool canInteract = false;
     //Use to track time for damage
     private float damageTimer = 0f;
@@ -56,11 +56,11 @@ public class PlayerBehaviour : MonoBehaviour
     float interactionDistance = 5f;
 
     [SerializeField]
-    int acidDPS = 40;
+    float acidDPS = 40f;
     [SerializeField]
-    int smokeDPS = 10;
+    float smokeDPS = 10f;
     [SerializeField]
-    int enemyDPS = 10;
+    float enemyDPS = 10f;
 
     [SerializeField]
     GameObject projectile;
@@ -83,14 +83,14 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI WinMessage;
     [SerializeField]
-    int mutagenHealAmt = 50;
+    float mutagenHealAmt = 50f;
     void Start()
     {
         currentPlayerHealth = maxPlayerHealth;
         currentBreath = maxBreath;
         //Add text to UI
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
-        mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
+        mutagenAmtText.text = "Mutagens: " + mutagenScore.ToString();
     }
     void Update()
     {
@@ -106,8 +106,6 @@ public class PlayerBehaviour : MonoBehaviour
             //If collectible is within interaction range
             if (hitInfo.collider.gameObject.CompareTag("Collectible"))
             {
-                // hideInteractScreen = false;
-                // InteractScreen();
                 InteractMessage.text = "[E] Mutagen \n+" + mutagenHealAmt + "HP";
                 //Set currentMutagen to the one in front of player and allow use of Interact
                 currentMutagen = hitInfo.collider.gameObject.GetComponent<MutagenBehaviour>();
@@ -116,8 +114,7 @@ public class PlayerBehaviour : MonoBehaviour
             //If door is within interaction range
             else if (hitInfo.collider.gameObject.CompareTag("Door"))
             {
-                // hideInteractScreen = false;
-                // InteractScreen();
+
                 InteractMessage.text = "[E] Interact";
                 //Set currentDoor to the one in front of player and allow use of Interact
                 currentDoor = hitInfo.collider.gameObject.GetComponent<DoorBehaviour>();
@@ -125,16 +122,14 @@ public class PlayerBehaviour : MonoBehaviour
             }
             else if (hitInfo.collider.gameObject.CompareTag("Gun"))
             {
-                // hideInteractScreen = false;
-                // InteractScreen();
+
                 InteractMessage.text = "[E] Pickup Gun";
                 currentGun = hitInfo.collider.gameObject.GetComponent<GunBehaviour>();
                 canInteract = true;
             }
             else if (hitInfo.collider.gameObject.CompareTag("Win"))
             {
-                // hideInteractScreen = false;
-                // InteractScreen();
+
                 InteractMessage.text = "[E] Exit";
                 currentExit = hitInfo.collider.gameObject.GetComponent<ExitBehaviour>();
                 canInteract = true;
@@ -160,32 +155,8 @@ public class PlayerBehaviour : MonoBehaviour
         currentGun = null;
         canInteract = false;
         InteractMessage.text = null;
-        // hideInteractScreen = true;
-        // InteractScreen();
+
     }
-    /// <InteractScreen summary>
-    /// Default is hidden, text is transparent, Show Interact screen when able to interact
-    /// </summary>
-    // void InteractScreen()
-    // {
-    //     if (!hideInteractScreen)
-    //     //while raycast hits interactable,show this screen
-    //     {
-    //         float transparency = 1f;
-    //         Color imageColor = Color.white;
-    //         //Set alpha of imageColor to be transparency variable
-    //         imageColor.a = transparency;
-    //         InteractMessage.color = imageColor;
-    //     }
-    //     else
-    //     {
-    //         float transparency = 0f;
-    //         Color imageColor = Color.white;
-    //         //Set alpha of imageColor to be transparency variable
-    //         imageColor.a = transparency;
-    //         InteractMessage.color = imageColor;
-    //     }
-    // }
     void DamageScreen()
     {
         //As damage is taken, transparency increases
@@ -200,7 +171,7 @@ public class PlayerBehaviour : MonoBehaviour
     /// Function to take damage and reset timer to control rate of damage taken
     /// </summary>
     /// <param name="dps"></param>
-    private void DamageTaken(int dps)
+    private void DamageTaken(float dps)
     {
         currentPlayerHealth -= dps;
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
@@ -257,9 +228,6 @@ public class PlayerBehaviour : MonoBehaviour
             if (damageTimer >= 2f)
             {
                 DamageTaken(acidDPS);
-                // currentPlayerHealth -= acidDPS;
-                // playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
-                // damageTimer = 0f;
             }
         }
         // Smoke-buffer time of held breath, then Damage Over Time
@@ -327,7 +295,7 @@ public class PlayerBehaviour : MonoBehaviour
             else if (currentMutagen != null)
             {
                 currentMutagen.Collect(this);
-                ModifyHealth(50);
+                ModifyHealth(50f);
             }
             else if (currentGun != null)
             {
@@ -339,7 +307,7 @@ public class PlayerBehaviour : MonoBehaviour
             }
             else if (currentExit != null)
             {
-                if (mutagenAmt >= 10)
+                if (mutagenScore >= 10)
                 {
                     StartCoroutine(WinLoadNew());
                 }
@@ -353,6 +321,7 @@ public class PlayerBehaviour : MonoBehaviour
     IEnumerator WinLoadNew()
     {
         WinScreen.SetActive(true);
+        DeathScreen.SetActive(true);
         transform.position = respawnPoint.position;
         transform.rotation = respawnPoint.rotation;
         WinMessage.text = "Congratulations!\n\n You get this hideous Win Screen!";
@@ -360,34 +329,39 @@ public class PlayerBehaviour : MonoBehaviour
         WinMessage.text = "Game is Restarting";
         yield return new WaitForSeconds(3);
         WinScreen.SetActive(false);
+        DeathScreen.SetActive(false);
         SceneManager.LoadScene("SampleScene",LoadSceneMode.Single);
     }
     IEnumerator NeedMore()
     {
         if (mutagensLeft > 1)
         {
-            WinMessage.text = "You're not strong enough, find " + mutagensLeft + " more mutagens";
+            WinScreen.SetActive(true);
+            WinMessage.text = "You're not strong enough, find " + mutagensLeft + " more Mutagens";
             yield return new WaitForSeconds(3);
+            WinScreen.SetActive(false);
             WinMessage.text = null;
         }
         else
         {
-            WinMessage.text = "You're not strong enough, find the Last";
+            WinScreen.SetActive(true);
+            WinMessage.text = "You're not strong enough, find the Last Mutagen";
             yield return new WaitForSeconds(3);
+            WinScreen.SetActive(false);
             WinMessage.text = null;
         }
 
     }
     //Add to mutagen score when collected
-    public void ModifyMutagenAmt(int amt)
+    public void ModifyMutagenScore(int amt)
     {
-        mutagenAmt += amt;
-        mutagensLeft = totalMutagens - mutagenAmt;
+        mutagenScore += amt;
+        mutagensLeft = totalMutagens - mutagenScore;
         //Update new mutagen amount to UI
-        mutagenAmtText.text = "Mutagens: " + mutagenAmt.ToString();
+        mutagenAmtText.text = "Mutagens: " + mutagenScore.ToString();
     }
     //Mutagens heal by amount specified in function, sets health to max health if it goes over
-    void ModifyHealth(int mutagenHealAmt)
+    void ModifyHealth(float mutagenHealAmt)
     {
         if (currentPlayerHealth + mutagenHealAmt > maxPlayerHealth)
         {

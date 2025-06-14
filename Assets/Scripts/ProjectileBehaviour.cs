@@ -3,7 +3,7 @@ using UnityEngine;
 public class ProjectileBehaviour : MonoBehaviour
 {
     [SerializeField]
-    int ProjectileDamage = 20;
+    float ProjectileDamage = 20f;
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Projectile collided with" + collision.gameObject.name);

@@ -13,6 +13,9 @@ public class EnemyBehaviour : MonoBehaviour
     // public float timeBetweenAttacks;
     // bool alreadyAttacked;
     public float EnemyHealth;
+    public float MaxEnemyHealth;
+    [SerializeField]
+    FloatingHealthBar healthBar;
     //Time between walks
     private float walkTime = 0f;
     //States
@@ -29,6 +32,12 @@ public class EnemyBehaviour : MonoBehaviour
     {
         Player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
+        healthBar.UpdateHealthBar(EnemyHealth, MaxEnemyHealth);
+    }
+    void Start()
+    {
+        EnemyHealth = MaxEnemyHealth;
     }
     void Update()
     {
@@ -70,13 +79,16 @@ public class EnemyBehaviour : MonoBehaviour
         transform.LookAt(Player);
         agent.SetDestination(Player.position);
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         EnemyHealth -= damage;
+        Debug.Log("Enemy:" + EnemyHealth);
+        Debug.Log("Max: " + MaxEnemyHealth);
+        healthBar.UpdateHealthBar(EnemyHealth, MaxEnemyHealth);
         if (EnemyHealth <= 0 && !isLooted)
         {
             isLooted = true;
-            Invoke(nameof(Loot),0.5f);
+            Invoke(nameof(Loot), 0.5f);
         }
     }
     private void Loot()
