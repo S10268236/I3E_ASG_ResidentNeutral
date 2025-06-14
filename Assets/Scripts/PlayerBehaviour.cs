@@ -84,10 +84,15 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI WinMessage;
     [SerializeField]
+    GameObject IntroPanel;
+    [SerializeField]
+    TextMeshProUGUI IntroText;
+    [SerializeField]
     float mutagenHealAmt = 50f;
     //Audio Variables
     public AudioSource ShootAudio;
     public AudioSource Coughing;
+    public AudioSource AcidBubbling;
     //Gun Fire rate Variables
     private bool gunFired = false;
     [SerializeField]
@@ -99,6 +104,14 @@ public class PlayerBehaviour : MonoBehaviour
         //Add text to UI
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
         mutagenAmtText.text = "Mutagens: " + mutagenScore.ToString();
+        StartCoroutine(Introduction());
+    }
+    IEnumerator Introduction()
+    {
+        IntroText.text = "You awaken in a smoke-filled Surgery Room, with no recollection of how you got there.\n\n The last thing you remember is entering the Interview room for a job at the Parasol Corporation.\n\n\n Escape ";
+        IntroPanel.SetActive(true);
+        yield return new WaitForSeconds(8);
+        IntroPanel.SetActive(false);
     }
     void Update()
     {
@@ -228,6 +241,10 @@ public class PlayerBehaviour : MonoBehaviour
         {
             Coughing.Play();
         }
+        if (other.gameObject.CompareTag("Acid") && currentPlayerHealth > 0)
+        {
+            AcidBubbling.Play();
+        }
     }
 
     void OnTriggerStay(Collider other)
@@ -276,6 +293,7 @@ public class PlayerBehaviour : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         Coughing.Pause();
+        AcidBubbling.Pause();
         //Debug.Log("Leaving trigger:" + other.gameObject.name);
         //Resets damage timer if player leaves hazard zone
         damageTimer = 0f;
