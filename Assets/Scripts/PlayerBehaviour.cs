@@ -4,6 +4,11 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 using UnityEngine.ProBuilder.Shapes;
+/*
+*Author: Richard Wong Zhi Hui
+*Date: 15/6/2025
+*Description: Interactions of player with items and environment
+*/
 
 public class PlayerBehaviour : MonoBehaviour
 {

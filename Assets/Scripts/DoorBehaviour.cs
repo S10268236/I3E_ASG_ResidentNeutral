@@ -1,5 +1,9 @@
 using UnityEngine;
-
+/*
+*Author: Richard Wong Zhi Hui
+*Date: 15/6/2025
+*Description: Door opening and closing
+*/
 public class DoorBehaviour : MonoBehaviour
 {
     /// <summary>

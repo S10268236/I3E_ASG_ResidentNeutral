@@ -1,5 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
+/*
+*Author: Richard Wong Zhi Hui
+*Date: 15/6/2025
+*Description: Enemy patrol, chase, damage and audio
+*/
 
 public class EnemyBehaviour : MonoBehaviour
 {

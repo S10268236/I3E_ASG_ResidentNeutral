@@ -1,5 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+/*
+*Author: Richard Wong Zhi Hui
+*Date: 15/6/2025
+*Description: Enemy Health Bars 
+*/
 
 public class FloatingHealthBar : MonoBehaviour
 {

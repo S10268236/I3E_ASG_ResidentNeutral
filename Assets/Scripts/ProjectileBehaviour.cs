@@ -1,5 +1,9 @@
 using UnityEngine;
-
+/*
+*Author: Richard Wong Zhi Hui
+*Date: 15/6/2025
+*Description: Projectile damage, and collision registering
+*/
 public class ProjectileBehaviour : MonoBehaviour
 {
     //Allow setting of projectile damage

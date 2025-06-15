@@ -1,5 +1,9 @@
 using UnityEngine;
-
+/*
+*Author: Richard Wong Zhi Hui
+*Date: 15/6/2025
+*Description: Mutagen collection and Audio
+*/
 public class MutagenBehaviour : MonoBehaviour
 {
     //Allow setting of Mutagen value
