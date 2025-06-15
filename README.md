@@ -18,7 +18,8 @@ Sprint: Hold Shift<br/>
 <p>Fullscreen/ Fullscreen Windowed</p>
 
 ## Limitations: 
-<p>Damage screen is locked in dimensions, changing resolution causes it to shift off screen</p>
+<p>Damage screen is locked in dimensions, changing resolution causes it to shift off screen
+Raycast spawn point is slightly in front of player to make the gun projectile trajectory make sense, however this means you cannot interact with items directly flush in front of you,</p>
 
 ## References & Credits:
 <p>Blood Screen Image: https://www.pngkey.com/detail/u2e6y3q8y3q8y3a9_blood-on-screen-png-blood-frame-png/ <br/>
