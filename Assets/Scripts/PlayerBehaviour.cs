@@ -12,100 +12,119 @@ public class PlayerBehaviour : MonoBehaviour
     /// <Mutagen summary>
     /// Score points & amount required to pass level, collectible and heals
     /// </summary>
+    //Mutagen Variables
     int mutagenScore = 0;
     private int totalMutagens = 10;
     int mutagensLeft;
+    //Allow setting of heal amount for each mutagen
+    [SerializeField]
+    float mutagenHealAmt = 50f;
+    //Player Health Variables
     public float maxPlayerHealth = 100f;
     float currentPlayerHealth;
+    //Interact check
     bool canInteract = false;
     //Use to track time for damage
     private float damageTimer = 0f;
-    //Track held breath time
+    //Breath Variables
     private float maxBreath = 5f;
     private float currentBreath;
     //Track whether gun is obtained
     bool gotGun = false;
-    //Onscreen overlay for taking damage
-    public Image HealthImpact;
-    //Set a variable for Door, Mutagen and Gun, set it to null for future storage of Raycast collider
+    //Set a variable for Door, Mutagen, Gun, Exit, Oxygen and set it to null for future storage of Raycast collider
     DoorBehaviour currentDoor = null;
     MutagenBehaviour currentMutagen = null;
     GunBehaviour currentGun = null;
     ExitBehaviour currentExit = null;
     OxygenBehaviour currentOxygen = null;
-
+    
+    //Onscreen overlay for taking damage
+    public Image HealthImpact;
+    //Update player Health on UI
     [SerializeField]
     TextMeshProUGUI playerHealthText;
 
+    //Update Mutagen obtained on UI
     [SerializeField]
     TextMeshProUGUI mutagenAmtText;
-
+    //Aim reticle image input field
     [SerializeField]
     Image reticle;
-
-    [SerializeField]
-    TextMeshProUGUI holdBreathText;
-
-    [SerializeField]
-    Transform spawnPoint;
-    [SerializeField]
-    Transform GunLocation;
-    [SerializeField]
-    Transform respawnPoint;
-
-    [SerializeField]
-    float interactionDistance = 5f;
-
-    [SerializeField]
-    float acidDPS = 40f;
-    [SerializeField]
-    float smokeDPS = 10f;
-    [SerializeField]
-    float enemyDPS = 10f;
-
-    [SerializeField]
-    GameObject projectile;
-    [SerializeField]
-    GameObject GunModel;
-    [SerializeField]
-    GameObject GunParentFollow;
-
-    [SerializeField]
-    float fireStrength = 200f;
-
+    //Input field for Interact Message for all interactables
     [SerializeField]
     TextMeshProUGUI InteractMessage;
+    //Input field for screen on death
     [SerializeField]
     GameObject DeathScreen;
+    //Input field for text shown on death
     [SerializeField]
     TextMeshProUGUI DeathMessage;
+    //Input field for screen on win
     [SerializeField]
     GameObject WinScreen;
+    //Input field for text shown on win
     [SerializeField]
     TextMeshProUGUI WinMessage;
+    //Input field for intro panel
     [SerializeField]
     GameObject IntroPanel;
+    //Input field for intro message
     [SerializeField]
     TextMeshProUGUI IntroText;
+    //Input field for respawn point
     [SerializeField]
-    float mutagenHealAmt = 50f;
+    Transform respawnPoint;
+    //Set how far your able to intereact
+    [SerializeField]
+    float interactionDistance = 5f;
+    //Input field for acid DPS
+    [SerializeField]
+    float acidDPS = 40f;
+    //Input field for smoke DPS
+    [SerializeField]
+    float smokeDPS = 10f;
+    //Input field for enemy DPS
+    [SerializeField]
+    float enemyDPS = 10f;
+    //Which gameobject to instantiate when firing
+    [SerializeField]
+    GameObject projectile;
+    //Input field for where to spawn-Projectile
+    [SerializeField]
+    Transform spawnPoint;
+    //Input field for Gun spawn
+    [SerializeField]
+    Transform GunLocation;
+    //What to show when obtaining gun
+    [SerializeField]
+    GameObject GunModel;
+    //Allow for gun to follow player
+    [SerializeField]
+    GameObject GunParentFollow;
+    //Forward force for projectiles
+    [SerializeField]
+    float fireStrength = 200f;
     //Audio Variables
     public AudioSource ShootAudio;
     public AudioSource Coughing;
     public AudioSource AcidBubbling;
     //Gun Fire rate Variables
     private bool gunFired = false;
-    [SerializeField]
-    // private float FireRate;
     void Start()
     {
+        //Set Player health and breath to maximum values
         currentPlayerHealth = maxPlayerHealth;
         currentBreath = maxBreath;
-        //Add text to UI
+        //Add Health and Mutagens collected to UI
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
         mutagenAmtText.text = "Mutagens: " + mutagenScore.ToString();
+        //Show intro message
         StartCoroutine(Introduction());
     }
+    /// <Introduction summary>
+    /// Shows Intro, disappears automatically
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Introduction()
     {
         IntroText.text = "You awaken in a smoke-filled Surgery Room, with no recollection of how you got there.\n\n The last thing you remember is entering the Interview room for a job at the Parasol Corporation.\n\n\n Escape ";
@@ -141,6 +160,7 @@ public class PlayerBehaviour : MonoBehaviour
                 currentDoor = hitInfo.collider.gameObject.GetComponent<DoorBehaviour>();
                 canInteract = true;
             }
+            //if its gun
             else if (hitInfo.collider.gameObject.CompareTag("Gun"))
             {
 
@@ -148,6 +168,7 @@ public class PlayerBehaviour : MonoBehaviour
                 currentGun = hitInfo.collider.gameObject.GetComponent<GunBehaviour>();
                 canInteract = true;
             }
+            //if its the exit
             else if (hitInfo.collider.gameObject.CompareTag("Win"))
             {
 
@@ -155,13 +176,14 @@ public class PlayerBehaviour : MonoBehaviour
                 currentExit = hitInfo.collider.gameObject.GetComponent<ExitBehaviour>();
                 canInteract = true;
             }
+            //Reset variables to default if it hits non interactables
             else if (hitInfo.collider.gameObject.CompareTag("Untagged"))
             {
                 ResetRaycast();
             }
         }
         //Reset all variables to default state when Raycast = false
-        else
+        else 
         {
             ResetRaycast();
         }
@@ -178,6 +200,9 @@ public class PlayerBehaviour : MonoBehaviour
         InteractMessage.text = null;
 
     }
+    /// <Damage Screen summary>
+    /// Show on screen damage when hp is reduced
+    /// </summary>
     void DamageScreen()
     {
         //As damage is taken, transparency increases
@@ -188,14 +213,16 @@ public class PlayerBehaviour : MonoBehaviour
         HealthImpact.color = imageColor;
 
     }
-    /// <summary>
-    /// Function to take damage and reset timer to control rate of damage taken
+    /// <Damage taken summary>
+    /// Function to reduce HP and reset timer to control rate of damage taken
     /// </summary>
     /// <param name="dps"></param>
     private void DamageTaken(float dps)
     {
         currentPlayerHealth -= dps;
+        //Updating the UI
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
+        //Reset damagetimer to not take more damage
         damageTimer = 0f;
         //Death Trigger
         if (currentPlayerHealth <= 0)
@@ -214,6 +241,7 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void OnCollisionStay(Collision collision)
     {
+        //when contact with enemy and HP not 0, count time to adjust damage tick
         if (collision.collider.gameObject.CompareTag("Enemy") && currentPlayerHealth > 0)
         {
             damageTimer += Time.deltaTime;
@@ -237,10 +265,12 @@ public class PlayerBehaviour : MonoBehaviour
             currentOxygen = other.gameObject.GetComponent<OxygenBehaviour>();
             currentOxygen.Collect(this);
         }
+        //Play smoke audio when entering it
         if (other.gameObject.CompareTag("Smoke") && currentPlayerHealth > 0)
         {
             Coughing.Play();
         }
+        //Play acid audio when entering it
         if (other.gameObject.CompareTag("Acid") && currentPlayerHealth > 0)
         {
             AcidBubbling.Play();
@@ -277,21 +307,32 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
     }
+    /// <Respawn summary>
+    /// Teleports player back to start, Shows death screen for a while, resets player HP and reflects on UI
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Respawn()
     {
+        //Activate the death screen
         DeathScreen.SetActive(true);
         DeathMessage.text = "You Are Dead";
+        //Reset HP
         currentPlayerHealth = maxPlayerHealth;
+        //Teleport back to start
         transform.position = respawnPoint.position;
         transform.rotation = respawnPoint.rotation;
+        //Wait 2 seconds or frame closes to 2 seconds
         yield return new WaitForSeconds(2);
+        //deactivate death screen
         DeathScreen.SetActive(false);
         DeathMessage.text = null;
+        //reflect on UI
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
     }
 
     void OnTriggerExit(Collider other)
     {
+        //Stop the audios for smoke and acid when leaving trigger zones
         Coughing.Pause();
         AcidBubbling.Pause();
         //Debug.Log("Leaving trigger:" + other.gameObject.name);
@@ -329,6 +370,7 @@ public class PlayerBehaviour : MonoBehaviour
                 currentMutagen.Collect(this);
                 ModifyHealth(50f);
             }
+            //Check if gun
             else if (currentGun != null)
             {
                 currentGun.Collect(this);
@@ -337,33 +379,48 @@ public class PlayerBehaviour : MonoBehaviour
                 Transform showGunTransform = showGun.transform;
                 showGunTransform.SetParent(GunParentFollow.transform);
             }
+            //Check if exit
             else if (currentExit != null)
             {
                 if (mutagenScore >= 10)
                 {
+                    //Win Screen
                     StartCoroutine(WinLoadNew());
                 }
                 else
                 {
+                    //Requirements screen
                     StartCoroutine(NeedMore());
                 }
             }
         }
     }
+    /// < WinLoadNew summary>
+    /// Show Win screen,Teleport player back to start, Show restart message and Restart scene
+    /// </summary>
+    /// <returns></returns>
     IEnumerator WinLoadNew()
     {
+        //Show win screen
         WinScreen.SetActive(true);
         DeathScreen.SetActive(true);
+        //Teleport player
         transform.position = respawnPoint.position;
         transform.rotation = respawnPoint.rotation;
         WinMessage.text = "Congratulations!\n\n You get this hideous Win Screen!";
         yield return new WaitForSeconds(3);
+        //Show restart message
         WinMessage.text = "Game is Restarting";
         yield return new WaitForSeconds(3);
         WinScreen.SetActive(false);
         DeathScreen.SetActive(false);
+        //Restart Scene
         SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
     }
+    /// <NeedMore summary>
+    /// When mutagen insufficient, request for more, with different messages depending on amount
+    /// </summary>
+    /// <returns></returns>
     IEnumerator NeedMore()
     {
         if (mutagensLeft > 1)
@@ -395,17 +452,20 @@ public class PlayerBehaviour : MonoBehaviour
     //Mutagens heal by amount specified in function, sets health to max health if it goes over
     void ModifyHealth(float mutagenHealAmt)
     {
+        //Heal goes over maxHP
         if (currentPlayerHealth + mutagenHealAmt > maxPlayerHealth)
         {
+            //Prevent overhealing
             currentPlayerHealth = maxPlayerHealth;
         }
         else
         {
             currentPlayerHealth += mutagenHealAmt;
         }
+        //Update on UI
         playerHealthText.text = "Health: " + currentPlayerHealth.ToString();
     }
-    /// <summary>
+    /// <OnFire summary>
     /// Fire a projectile with forward motion
     /// </summary>
     public void OnFire()
@@ -425,6 +485,10 @@ public class PlayerBehaviour : MonoBehaviour
 
         }
     }
+    /// <FireRate summary>
+    /// Sets a fire rate of 1s for the gun
+    /// </summary>
+    /// <returns></returns>
     IEnumerator FireRate()
     {
         gunFired = true;

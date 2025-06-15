@@ -3,7 +3,7 @@ using UnityEngine;
 public class DoorBehaviour : MonoBehaviour
 {
     /// <summary>
-    /// Opening and closing door, smooth operation
+    /// Opening and closing door
     /// </summary>
 
     //Set default state of door to be closed

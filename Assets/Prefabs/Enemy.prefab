@@ -34597,7 +34597,6 @@ GameObject:
   - component: {fileID: 1923548925055176073}
   - component: {fileID: 8741084200288186902}
   - component: {fileID: 98371689026628320}
-  - component: {fileID: 2390934321788120168}
   m_Layer: 0
   m_Name: Sphere (2)
   m_TagString: Untagged
@@ -68656,28 +68655,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2413826625321088526}
   m_Mesh: {fileID: 0}
---- !u!64 &2390934321788120168
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2413826625321088526}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &2513406540862479277
 GameObject:
   m_ObjectHideFlags: 0
@@ -69223,7 +69200,6 @@ GameObject:
   - component: {fileID: 5761008513579653769}
   - component: {fileID: 4551739761037355176}
   - component: {fileID: 1745023026762772079}
-  - component: {fileID: 7235028027849207268}
   m_Layer: 0
   m_Name: Sphere (1)
   m_TagString: Untagged
@@ -103281,28 +103257,6 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4145901161738334864}
-  m_Mesh: {fileID: 0}
---- !u!64 &7235028027849207268
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4145901161738334864}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
   m_Mesh: {fileID: 0}
 --- !u!1 &5918366528897634029
 GameObject:
