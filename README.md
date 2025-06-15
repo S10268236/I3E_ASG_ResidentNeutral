@@ -37,6 +37,7 @@ Voices Assets: https://assetstore.unity.com/packages/audio/sound-fx/voices/voice
 Gun cocking sound: https://pixabay.com/sound-effects/berretta-9mm-cocking-slower-105410/ <br/>
 GunShot sound: https://pixabay.com/sound-effects/homeade-gun-shot1-no-echo-6366/ <br/>
 Acid bubbling sound: https://pixabay.com/sound-effects/acid-bubbling-105397/ <br/>
+Name reference: Resident Evil franchise
 </p>
 
 ## Answers:
