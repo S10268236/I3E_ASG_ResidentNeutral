@@ -2,15 +2,5 @@ using UnityEngine;
 
 public class SmokeBehaviour : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // Does nothing but I'm worried I referenced this somewhere and am too scared to delete it
 }
