@@ -7,7 +7,6 @@ Fire: F <br/>
 Jump: Space <br/>
 Sprint: Hold Shift<br/>
 </p>
-<br/>
 
 ## How to start: 
 <p>Unzip file,Open I3E_ASG_ResidentNeutral folder, Open Build folder, Open Windows folder, run I3E_ASG_ResidentNeutral.exe</p>
