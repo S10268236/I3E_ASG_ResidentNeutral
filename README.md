@@ -1,7 +1,6 @@
 # I3E_ASG_ResidentNeutral
 ## Description: Zombie Escape
 ## Controls
-<br />
 <p>Movement: WASD <br/>
 Interact: E <br/>
 Fire: F <br/>
@@ -10,15 +9,14 @@ Sprint: Hold Shift<br/>
 </p>
 <br/>
 
-## How to install: 
-<p>Unzip file, run the build</p>
+## How to start: 
+<p>Unzip file,Open I3E_ASG_ResidentNeutral folder, Open Build folder, Open Windows folder, run I3E_ASG_ResidentNeutral.exe</p>
 
 ## Platforms:
-<br/>
 <p>PC</p>
 
 ## Desired Settings: 
-<p> 16:9 Aspect resolution</p>
+<p>Fullscreen/ Fullscreen Windowed</p>
 
 ## Limitations: 
 <p>Damage screen is locked in dimensions, changing resolution causes it to shift off screen</p>
